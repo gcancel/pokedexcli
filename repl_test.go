@@ -48,3 +48,34 @@ func TestCleanInput(t *testing.T){
 
 }
 
+func TestPrintCommands(t *testing.T){
+	cases := []struct{
+		input  func() map[string]cliCommand
+		expected map[string]cliCommand
+	}{
+		{
+			input: getCommands,
+			expected: map[string]cliCommand{
+				"exit":{
+					name: "exit",
+					description: "Exit the Pokedex",
+					callback: commandExit,
+				},
+				"help":{
+					name: "help",
+					description: "Displays a help message",
+					callback: commandHelp,
+				},
+			 },
+		},
+		
+	}
+	for _,c := range cases{
+		if c.input()["exit"].name != c.expected["exit"].name{
+			t.Errorf("Map does not match existing map: %s, %s", c.input()["exit"].name, c.expected["exit"].name)
+		}
+	}
+	
+}
+
+

@@ -30,11 +30,13 @@ package main
 	stringSlice := strings.Split(strings.ToLower(text), " ")
 	return stringSlice
  }
+
  type cliCommand struct{
 	name string
 	description string
 	callback func() error
  }
+
  func getCommands() map[string]cliCommand{
 	return map[string]cliCommand{
 		"exit":{
@@ -49,6 +51,7 @@ package main
 		},
 	 }
  }
+
  func printCommands(){
 	for _,cmd := range getCommands(){
 		fmt.Printf("%s: %s\n", cmd.name, cmd.description)
