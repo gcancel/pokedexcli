@@ -49,6 +49,11 @@ package main
 			description: "Displays a help message",
 			callback: commandHelp,
 		},
+		"map":{
+			name: "map",
+			description: "Displays locations in the Pokemon World",
+			callback: commandMap,
+		},
 	 }
  }
 
