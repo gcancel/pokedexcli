@@ -1,2 +1,3 @@
-pokedexcli
-repl.log
+# ignoring the executable and the log files
+/pokedexcli
+/repl.log
