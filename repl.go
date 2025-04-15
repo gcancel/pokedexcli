@@ -34,7 +34,7 @@ package main
  type cliCommand struct{
 	name string
 	description string
-	callback func() error
+	callback func(cfg *Config) error
  }
 
  func getCommands() map[string]cliCommand{
@@ -54,6 +54,11 @@ package main
 			description: "Displays locations in the Pokemon World",
 			callback: commandMap,
 		},
+		"mapb":{
+			name: "mapb",
+			description: "Displays locations in the Pokemon World",
+			callback: commandMapB,
+		},
 	 }
  }
 
@@ -64,11 +69,12 @@ package main
  }
 
  func executeCommands(cmd string){
+
 	execute, exists := getCommands()[cmd];
 	if !exists{
 		fmt.Println("Unknown Command")
 	}
-	err := execute.callback()
+	err := execute.callback(&APIConfig)
 	if err != nil{
 		fmt.Println(err)
 	}

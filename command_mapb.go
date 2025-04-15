@@ -7,14 +7,9 @@ import(
 	"io"
 )
 
-func parsePageLimit(url string) (int, error){
-	//nothing atm
-	return 0, nil
-}
+func commandMapB(cfg *Config) error{
 
-func commandMap(cfg *Config) error{
-
-	res, err := http.Get(cfg.Next)
+	res, err := http.Get(cfg.Prev)
 	if err != nil{
 		fmt.Errorf("Error retrieving locations...", err)
 	}
@@ -31,7 +26,6 @@ func commandMap(cfg *Config) error{
 	}
 	fmt.Println(PokemonLocations.Count)
 
-	//need to add guard clause to check if the url parameter offset + the limit is equal to the resource count, if so, this is the last page
 	//updating the config variable to point to the next page
 	cfg.Prev = PokemonLocations.Previous
 	cfg.Next = PokemonLocations.Next
