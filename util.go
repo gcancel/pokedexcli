@@ -1,10 +1,26 @@
 package main
 
 import(
-	
+	"net/url"
+	"strconv"
+	"fmt"
 )
 
-func ParsePageLimit(url string) (int, error){
-	//nothing atm
-	return 0, nil
+func ParsePageLimit(uri string) (int, int, error){
+	parsedURL, err := url.Parse(uri)
+	if err != nil{
+		return 0, 0, fmt.Errorf("Error parsing the url...", err)
+	}
+	//fmt.Printf("url data: %v\n", parsedURL.Query())
+
+	limit, err := strconv.Atoi(parsedURL.Query()["limit"][0])
+	if err != nil{
+		return 0, 0, fmt.Errorf("Error parsing limit parameter...")
+	}
+	offset, _ := strconv.Atoi(parsedURL.Query()["offset"][0])
+	if err != nil{
+		return 0, 0, fmt.Errorf("Error parsing offset parameter")
+	}
+
+	return limit, offset, nil
 }

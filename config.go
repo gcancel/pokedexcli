@@ -14,9 +14,11 @@ type PokeApiJsonResponse struct{
 type Config struct{
 	Next string
 	Prev string
+	Count int
 }
 
 var APIConfig = Config{
-	Next: "https://pokeapi.co/api/v2/location-area",
+	Next: "https://pokeapi.co/api/v2/location-area?offset=0&limit=20",
 	Prev: "",
+	Count: 1089,
 }

@@ -71,11 +71,13 @@ package main
  func executeCommands(cmd string){
 
 	execute, exists := getCommands()[cmd];
-	if !exists{
+	if exists == false{
 		fmt.Println("Unknown Command")
+		return
 	}
 	err := execute.callback(&APIConfig)
 	if err != nil{
 		fmt.Println(err)
+		return
 	}
  }
