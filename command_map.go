@@ -1,38 +1,46 @@
 package main
 
-import(
-	"fmt"
+import (
 	"encoding/json"
-	"net/http"
+	"fmt"
+	"internal/pokecache"
 	"io"
+	"net/http"
+	"time"
 )
 
-func commandMap(cfg *Config) error{
+func commandMap(cfg *Config) error {
 
 	/* limit, offset, _ := ParsePageLimit(cfg.Next)
 	if limit + offset == cfg.Count{
 		fmt.Println("This is the last result page...")
 		return nil
 	} */
-	
-	if cfg.Next == ""{
+
+	if cfg.Next == "" {
 		fmt.Println("This is the last result page...")
 		return nil
 	}
 
 	res, err := http.Get(cfg.Next)
-	if err != nil{
+	if err != nil {
 		fmt.Errorf("Error retrieving locations... %v", err)
 	}
 	defer res.Body.Close()
 
 	data, err := io.ReadAll(res.Body)
-	if err != nil{
+	if err != nil {
 		return err
+	}
+	//creating cache
+	cache := pokecache.NewCache(10 * time.Second)
+	cache.Add(cfg.Next, data)
+	for k, _ := range cache.CacheEntries {
+		fmt.Printf("cache data: %v\n", k)
 	}
 
 	var PokemonLocations PokeApiJsonResponse
-	if err := json.Unmarshal(data, &PokemonLocations); err != nil{
+	if err := json.Unmarshal(data, &PokemonLocations); err != nil {
 		fmt.Errorf("Error Unmarshalling data...")
 	}
 	//fmt.Println(PokemonLocations.Count)
@@ -43,7 +51,7 @@ func commandMap(cfg *Config) error{
 	cfg.Next = PokemonLocations.Next
 	results := PokemonLocations.Results
 
-	for _,loc := range results{
+	for _, loc := range results {
 		fmt.Printf("%s\n", loc.Name)
 	}
 	fmt.Println(PokemonLocations.Next)
@@ -51,26 +59,26 @@ func commandMap(cfg *Config) error{
 	return nil
 }
 
-func commandMapB(cfg *Config) error{
+func commandMapB(cfg *Config) error {
 
-	if cfg.Prev == ""{
+	if cfg.Prev == "" {
 		fmt.Println("This is the first result page...")
 		return nil
 	}
 
 	res, err := http.Get(cfg.Prev)
-	if err != nil{
+	if err != nil {
 		fmt.Errorf("Error retrieving locations... %v", err)
 	}
 	defer res.Body.Close()
 
 	data, err := io.ReadAll(res.Body)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	var PokemonLocations PokeApiJsonResponse
-	if err := json.Unmarshal(data, &PokemonLocations); err != nil{
+	if err := json.Unmarshal(data, &PokemonLocations); err != nil {
 		fmt.Errorf("Error Unmarshalling data...")
 	}
 	//fmt.Println(PokemonLocations.Count)
@@ -81,7 +89,7 @@ func commandMapB(cfg *Config) error{
 	cfg.Next = PokemonLocations.Next
 	results := PokemonLocations.Results
 
-	for _,loc := range results{
+	for _, loc := range results {
 		fmt.Printf("%s\n", loc.Name)
 	}
 	//fmt.Println(PokemonLocations.Next)
