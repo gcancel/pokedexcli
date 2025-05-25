@@ -62,7 +62,7 @@ func (c *Cache) reapLoop(t time.Time, interval time.Duration) {
 		elapsed := currentTime.Add(-interval)
 		if elapsed.Sub(cache.CreatedAt) >= interval {
 			delete(c.CacheEntries, key)
-			//fmt.Printf("deleted: %v\n", key)
+			fmt.Printf("deleted: %v\n", key)
 		}
 	}
 	c.Unlock()
