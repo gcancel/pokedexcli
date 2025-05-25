@@ -8,39 +8,40 @@ import (
 
 type Cache struct {
 	sync.RWMutex
-	CacheEntries map[string]cacheEntry
+	CacheEntries map[string]CacheEntry
 }
 
-type cacheEntry struct {
-	createdAt time.Time
+type CacheEntry struct {
+	CreatedAt time.Time
 	val       []byte
 }
 
 func NewCache(interval time.Duration) *Cache {
+	//move ticker logic to repl, rework to just check the  expiration and return a new cache
+	cache := Cache{CacheEntries: make(map[string]CacheEntry, 0)}
 	ticker := time.NewTicker(interval)
-	defer ticker.Stop()
-
-	cache := new(Cache)
-	cache.CacheEntries = make(map[string]cacheEntry, 0)
-	select {
-	case t := <-ticker.C:
-		cache.reapLoop(t, interval)
-	default:
-		return cache
-	}
-	return cache
+	go func(){
+		for{
+			select{
+			case <-ticker.C:
+				currentTime := time.Now()
+				cache.reapLoop(currentTime, interval)
+			}
+		}
+		}()
+	return &cache
 }
 
 func (c *Cache) Add(k string, v []byte) {
 	c.Lock()
+	defer c.Unlock()
 	// copying underlying struct in map to be modified
 	cache := c.CacheEntries[k]
-	cache.createdAt = time.Now()
+	cache.CreatedAt = time.Now()
 	cache.val = v
 	// modifying the underlying struct with the new entry
 	c.CacheEntries[k] = cache
-	//fmt.Printf("from cache: %v \n", cache)
-	c.Unlock()
+	
 
 }
 
@@ -54,15 +55,14 @@ func (c *Cache) Get(k string) ([]byte, bool) {
 	return []byte{}, false
 }
 
-func (c *Cache) reapLoop(t time.Time, i time.Duration) {
-	//still need to make time.Ticker to make this function correctly...
+func (c *Cache) reapLoop(t time.Time, interval time.Duration) {
 	c.Lock()
 	for key, cache := range c.CacheEntries {
 		currentTime := t
-		elapsed := currentTime.Add(-i)
-		fmt.Println(elapsed)
-		if elapsed.Sub(cache.createdAt) >= i {
+		elapsed := currentTime.Add(-interval)
+		if elapsed.Sub(cache.CreatedAt) >= interval {
 			delete(c.CacheEntries, key)
+			//fmt.Printf("deleted: %v\n", key)
 		}
 	}
 	c.Unlock()

@@ -5,22 +5,29 @@ package main
 	"strings"
 	"bufio"
 	"os"
+	"time"
+	"internal/pokecache"
  )
 
  func startRepl(){
 	scanner := bufio.NewScanner(os.Stdin)
+
+	//creating cache
+	cache := pokecache.NewCache(10 * time.Second)
+	
 	for{
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
+
 		//splitting the input and capturing the command (first string in the slice)
 		userInput := cleanInput(scanner.Text())
 		if len(userInput) == 0{
 			continue
 		}
 		userCommand := strings.TrimSpace(userInput[0])
-		//fmt.Println(userCommand)
+
 		//execute the user command
-		executeCommands(userCommand)
+		executeCommands(userCommand, cache)
 
 		//fmt.Printf("Your command was: %s \n", userCommand)
 	}
@@ -34,7 +41,7 @@ package main
  type cliCommand struct{
 	name string
 	description string
-	callback func(cfg *Config) error
+	callback func(cfg *Config, c *pokecache.Cache) error
  }
 
  func getCommands() map[string]cliCommand{
@@ -51,12 +58,12 @@ package main
 		},
 		"map":{
 			name: "map",
-			description: "Displays locations in the Pokemon World",
+			description: "Displays locations in the Pokemon World - Forward",
 			callback: commandMap,
 		},
 		"mapb":{
 			name: "mapb",
-			description: "Displays locations in the Pokemon World",
+			description: "Displays locations in the Pokemon World - Back",
 			callback: commandMapB,
 		},
 	 }
@@ -68,16 +75,17 @@ package main
 	}
  }
 
- func executeCommands(cmd string){
+ func executeCommands(cmd string, c *pokecache.Cache){
 
 	execute, exists := getCommands()[cmd];
-	if exists == false{
-		fmt.Println("Unknown Command")
+	if exists{
+		err := execute.callback(&APIConfig, c)
+		if err != nil{
+			fmt.Println(err)
+			return
+		}
 		return
 	}
-	err := execute.callback(&APIConfig)
-	if err != nil{
-		fmt.Println(err)
-		return
-	}
+	fmt.Println("Unknown Command")
+	return
  }
