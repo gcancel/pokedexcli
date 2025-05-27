@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func commandMap(cfg *Config, cache *pokecache.Cache) error {
+func commandMap(cfg *Config, cache pokecache.Cache, param string) error {
 
 	// check cache for data
 	// if data is there jump to unmarshalling the JSON
@@ -71,7 +71,7 @@ func commandMap(cfg *Config, cache *pokecache.Cache) error {
 	return nil
 }
 
-func commandMapB(cfg *Config, cache *pokecache.Cache) error {
+func commandMapB(cfg *Config, cache pokecache.Cache, param string) error {
 
 	if cfg.Prev == "" {
 		fmt.Println("This is the first result page...")

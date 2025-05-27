@@ -16,7 +16,7 @@ type CacheEntry struct {
 	val       []byte
 }
 
-func NewCache(interval time.Duration) *Cache {
+func NewCache(interval time.Duration) Cache {
 	//move ticker logic to repl, rework to just check the  expiration and return a new cache
 	cache := Cache{CacheEntries: make(map[string]CacheEntry, 0)}
 	ticker := time.NewTicker(interval)
@@ -29,7 +29,7 @@ func NewCache(interval time.Duration) *Cache {
 			}
 		}
 		}()
-	return &cache
+	return cache
 }
 
 func (c *Cache) Add(k string, v []byte) {

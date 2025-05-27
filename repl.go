@@ -12,24 +12,30 @@ package main
  func startRepl(){
 	scanner := bufio.NewScanner(os.Stdin)
 
-	//creating cache
+	// creating cache
 	cache := pokecache.NewCache(10 * time.Second)
 	
 	for{
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
 
-		//splitting the input and capturing the command (first string in the slice)
+		// splitting the input and capturing the command (first string in the slice)
 		userInput := cleanInput(scanner.Text())
+		userCommand := strings.TrimSpace(userInput[0])
+
+		var userParameter string
 		if len(userInput) == 0{
 			continue
 		}
-		userCommand := strings.TrimSpace(userInput[0])
+		// if there is a parameter passed, pass it down to the commands
+		if len(userInput) > 1{
+			userParameter = strings.TrimSpace(userInput[1])
+		}
+		
+		// execute the user command
+		executeCommands(userCommand, userParameter, cache)
 
-		//execute the user command
-		executeCommands(userCommand, cache)
-
-		//fmt.Printf("Your command was: %s \n", userCommand)
+		// fmt.Printf("Your command was: %s \n", userCommand)
 	}
  }
 
@@ -41,7 +47,7 @@ package main
  type cliCommand struct{
 	name string
 	description string
-	callback func(cfg *Config, c *pokecache.Cache) error
+	callback func(cfg *Config, c pokecache.Cache, param string) error
  }
 
  func getCommands() map[string]cliCommand{
@@ -66,6 +72,11 @@ package main
 			description: "Displays locations in the Pokemon World - Back",
 			callback: commandMapB,
 		},
+		"explore":{
+			name: "explore",
+			description: "Explores specified location.",
+			callback: commandExplore,
+		},
 	 }
  }
 
@@ -75,11 +86,11 @@ package main
 	}
  }
 
- func executeCommands(cmd string, c *pokecache.Cache){
+ func executeCommands(cmd, param string, c pokecache.Cache){
 
 	execute, exists := getCommands()[cmd];
 	if exists{
-		err := execute.callback(&APIConfig, c)
+		err := execute.callback(&APIConfig, c, param)
 		if err != nil{
 			fmt.Println(err)
 			return
