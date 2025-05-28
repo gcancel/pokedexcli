@@ -82,6 +82,16 @@ package main
 			description: "Attempt to catch a pokemon.",
 			callback: commandCatch,
 		},
+		"inspect":{
+			name: "inspect",
+			description: "Inspect the pokemon you caught.",
+			callback: commandInspect,
+		},
+		"pokedex":{
+			name: "pokedex",
+			description: "Displays all of the pokemon you have caught.",
+			callback: commandPokedex,
+		},
 	 }
  }
 

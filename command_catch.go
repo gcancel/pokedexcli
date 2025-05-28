@@ -51,12 +51,7 @@ func commandCatch(cfg *Config, cache pokecache.Cache, param string) error{
 	if catch > int(pokemon.BaseExperience / 2){
 		fmt.Printf("%v was caught!\n", pokemon.Name)
 		// adding new pokemon to backpack
-		// this needs to be a pointer to the bag and moved out of the function
 		cfg.Pokedex[pokemon.Name] = pokemon
-
-	 	for _,pokeball := range cfg.Pokedex{
-			fmt.Printf("%v\n", pokeball.Name)
-		}
 	}else{
 		// pokemon escaped
 		fmt.Printf("%v escaped!\n", pokemon.Name)
