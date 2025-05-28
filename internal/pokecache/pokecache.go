@@ -32,7 +32,7 @@ func NewCache(interval time.Duration) Cache {
 	return cache
 }
 
-func (c *Cache) Add(k string, v []byte) {
+func (c *Cache) Add(k string, v []byte) error {
 	c.Lock()
 	defer c.Unlock()
 	// copying underlying struct in map to be modified
@@ -41,8 +41,7 @@ func (c *Cache) Add(k string, v []byte) {
 	cache.val = v
 	// modifying the underlying struct with the new entry
 	c.CacheEntries[k] = cache
-	
-
+	return nil
 }
 
 func (c *Cache) Get(k string) ([]byte, bool) {

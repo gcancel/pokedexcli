@@ -13,7 +13,7 @@ package main
 	scanner := bufio.NewScanner(os.Stdin)
 
 	// creating cache
-	cache := pokecache.NewCache(10 * time.Second)
+	cache := pokecache.NewCache(30 * time.Second)
 	
 	for{
 		fmt.Print("Pokedex > ")
@@ -76,6 +76,11 @@ package main
 			name: "explore",
 			description: "Explores specified location.",
 			callback: commandExplore,
+		},
+		"catch":{
+			name: "catch",
+			description: "Attempt to catch a pokemon.",
+			callback: commandCatch,
 		},
 	 }
  }
