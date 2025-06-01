@@ -50,6 +50,7 @@ package main
 	callback func(cfg *Config, c pokecache.Cache, param string) error
  }
 
+ // registry to store commands
  func getCommands() map[string]cliCommand{
 	return map[string]cliCommand{
 		"exit":{
